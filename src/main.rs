@@ -1,11 +1,23 @@
-use std::{io::stdin, process::Command};
+use std::env::{args, self};
 
+fn pwd(){
+    let dir = env::current_dir().unwrap();
+    println!("{:?}",dir);
+}
+
+fn echo(){
+    println!("{}", env::args().skip(1).collect()::Vec<_>>().join(" "));
+
+}
 fn main() {
-    let mut input = String::new();
-    stdin().read_line(&mut input).unwrap();
+    let param: Vec<String> = args().collect();
+    
+    let comanda = &param[1];
+    // let nume = &param[2];
 
-    // read_line leaves a trailing newline, which trim removes
-    let command = input.trim();
-
-    Command::new(command).spawn().unwrap();
+    match comanda.as_str(){
+        "pwd" => pwd(),
+        "echo" => echo(),
+        _=>std::process::exit(-1),
+    }
 }
