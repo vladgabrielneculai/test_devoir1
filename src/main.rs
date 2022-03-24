@@ -1,34 +1,67 @@
-use std::{env::{args, self}, fs};
+use std::{
+    env::{self},
+    fs::{self, File}, io,
+};
 
-fn pwd(){
+fn pwd() {
     let dir = env::current_dir().unwrap();
-    println!("{}",dir.display());
+    println!("{}", dir.display())
 }
 
-// fn echo(){
-//     let optiune:String = param[2];
-//     let parametru:String = param[3];
-        
-
-// }
-
-fn mkdir(nume:&String){
-    let r = fs::create_dir_all(nume);
-    match r {
-        Err(e) => println!("error creating {}: {}", nume, e),
-        Ok(_) => println!("created {}: OK", nume),
+fn echo(input: Vec<&str>) {
+    let dim = input.len();
+    if input[1] == "-n" {
+        for i in 2..dim {
+            print!("{} ", input[i]);
+        }
+    } else {
+        for i in 1..dim {
+            println!("{}", input[i]);
+        }
     }
 }
+
+fn mkdir(input: Vec<&str>) {
+    for i in 1..input.len(){
+        fs::create_dir_all(input[i]);
+    }
+}
+
+fn removedir(input: Vec<&str>){
+    for i in 1..input.len(){
+        fs::remove_dir_all(input[i]);
+    }
+}
+
+fn rm(input: Vec<&str>){
+    for i in 1..input.len(){
+        fs::remove_file(input[i]);
+    }
+}
+
+fn touch(input: Vec<&str>){
+    for i in 1..input.len(){
+        let mut file = File::create(input[i]).expect("Error creating file");
+    }
+}
+
+//de rezolvat
+fn ls(input:Vec<&str>){
+    fs::read_dir(input[1]).unwrap();
+}
+
 fn main() {
-    let param: Vec<String> = args().collect();
-    
-    let comanda = &param[1];
-    let nume = &param[2];
-  
-    match comanda.as_str(){
-        "pwd" => pwd(),
-        //"echo" => echo(),
-        "mkdir" => mkdir(nume),
-        _=>std::process::exit(-1),
-    }
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Error reading input");
+        let input: Vec<&str> = input.split_whitespace().collect();
+        match input[0] {
+            "pwd" => pwd(),
+            "echo" => echo(input),
+            //"echo -n" => echo_n(nume),
+            "mkdir" => mkdir(input),
+            "rmdir" => removedir(input),
+            _ => std::process::exit(-1),
+        }
 }
