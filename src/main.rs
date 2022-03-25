@@ -1,6 +1,6 @@
 use std::{
     env::{self},
-    fs::{self, File}, io,
+    fs::{self, File}, io::{self, Read},
 };
 
 fn pwd() {
@@ -45,9 +45,18 @@ fn touch(input: Vec<&str>){
     }
 }
 
+fn cat(input: Vec<&str>){
+    for i in 1..input.len(){
+        let mut file = File::open(input[i]).unwrap();
+        let mut s = String::new();
+        file.read_to_string(&mut s);
+        println!("{} in {}", s, input[i]);
+    }
+}
+
 //de rezolvat
 fn ls(input:Vec<&str>){
-    fs::read_dir(input[1]).unwrap();
+    fs::read_dir(input[1]);
 }
 
 fn main() {
@@ -59,9 +68,11 @@ fn main() {
         match input[0] {
             "pwd" => pwd(),
             "echo" => echo(input),
-            //"echo -n" => echo_n(nume),
             "mkdir" => mkdir(input),
             "rmdir" => removedir(input),
+            "touch" => touch(input),
+            "rm" => rm(input),
+            "cat" => cat(input),
             _ => std::process::exit(-1),
         }
 }
