@@ -1,6 +1,8 @@
 use std::{
     env::{self},
-    fs::{self, File}, io::{self, Read},
+    error,
+    fs::{self, File},
+    io::{self, Read},
 };
 
 fn pwd() {
@@ -22,31 +24,52 @@ fn echo(input: Vec<&str>) {
 }
 
 fn mkdir(input: Vec<&str>) {
-    for i in 1..input.len(){
+    for i in 1..input.len() {
         fs::create_dir_all(input[i]);
     }
 }
 
-fn removedir(input: Vec<&str>){
-    for i in 1..input.len(){
+fn removedir(input: Vec<&str>) {
+    for i in 1..input.len() {
         fs::remove_dir_all(input[i]);
     }
 }
 
-fn rm(input: Vec<&str>){
-    for i in 1..input.len(){
-        fs::remove_file(input[i]);
+fn rm(input: Vec<&str>) {
+    if input[1] == "-r" {
+        for i in 2..input.len() {
+            fs::remove_file(input[i]);
+        }
+    }
+    if input[1] == "-R" {
+        for i in 2..input.len() {
+            fs::remove_file(input[i]);
+        }
+    }
+    if input[1] == "--recursive" {
+        for i in 2..input.len() {
+            fs::remove_file(input[i]);
+        }
+    }
+    // if input[1] == "-d"{
+
+    // }
+}
+
+fn touch(input: Vec<&str>) {
+    for i in 1..input.len() {
+        let mut file = File::create(input[i]);
+        // match file{
+        //     Ok(file)=>file,
+        //     Err(e)=>{
+        //         println!("Error {}",e);
+        //         std::process::exit(-100);
+        // }
     }
 }
 
-fn touch(input: Vec<&str>){
-    for i in 1..input.len(){
-        let mut file = File::create(input[i]).expect("Error creating file");
-    }
-}
-
-fn cat(input: Vec<&str>){
-    for i in 1..input.len(){
+fn cat(input: Vec<&str>) {
+    for i in 1..input.len() {
         let mut file = File::open(input[i]).unwrap();
         let mut s = String::new();
         file.read_to_string(&mut s);
@@ -55,24 +78,24 @@ fn cat(input: Vec<&str>){
 }
 
 //de rezolvat
-fn ls(input:Vec<&str>){
+fn ls(input: Vec<&str>) {
     fs::read_dir(input[1]);
 }
 
 fn main() {
-        let mut input = String::new();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Error reading input");
-        let input: Vec<&str> = input.split_whitespace().collect();
-        match input[0] {
-            "pwd" => pwd(),
-            "echo" => echo(input),
-            "mkdir" => mkdir(input),
-            "rmdir" => removedir(input),
-            "touch" => touch(input),
-            "rm" => rm(input),
-            "cat" => cat(input),
-            _ => std::process::exit(-1),
-        }
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Error reading input");
+    let input: Vec<&str> = input.split_whitespace().collect();
+    match input[0] {
+        "pwd" => pwd(),
+        "echo" => echo(input),
+        "mkdir" => mkdir(input),
+        "rmdir" => removedir(input),
+        "touch" => touch(input),
+        "rm" => rm(input),
+        "cat" => cat(input),
+        _ => std::process::exit(-1),
+    }
 }
